@@ -1,5 +1,7 @@
 #![warn(missing_debug_implementations, rust_2018_idioms)]
 
+use std::mem::replace;
+
 #[derive(Debug)]
 pub struct StrSplit<'a> {
     remainder: &'a str,
@@ -20,18 +22,17 @@ impl<'a> Iterator for StrSplit<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         if self.remainder.is_empty() {
             None
-        } else if self.delimiter.is_empty() {
-            let first = &self.remainder[..1];
-            self.remainder = &self.remainder[1..];
-            Some(first)
-        } else if let Some(next_delim) = self.remainder.find(self.delimiter) {
+        } else if let Some(found_delim) = self.remainder.find(self.delimiter) {
+            let next_delim = if self.delimiter.is_empty() {
+                1
+            } else {
+                found_delim
+            };
             let before_delim = &self.remainder[..next_delim];
             self.remainder = &self.remainder[next_delim + self.delimiter.len()..];
             Some(before_delim)
         } else {
-            let last = self.remainder;
-            self.remainder = "";
-            Some(last)
+            Some(replace(&mut self.remainder, &mut ""))
         }
     }
 }
