@@ -26,8 +26,13 @@ let haystack = "";
 let letters = StrSplit::new(haystack, " ").collect::<Vec<_>>();
 assert_eq!(letters, vec![] as Vec<&str>);
 
+// delimiter not found
+let haystack = "foo bar";
+let letters = StrSplit::new(haystack, "baz").collect::<Vec<_>>();
+assert_eq!(letters, vec!["foo bar"]);
+
 // empty delimiter returns each character as str
 let haystack = "abcd";
 let letters = StrSplit::new(haystack, "").collect::<Vec<_>>();
-assert_eq!(letters, vec!["a", "b", "c", "d"] as Vec<&str>);
+assert_eq!(letters, vec!["a", "b", "c", "d"]);
 ```
